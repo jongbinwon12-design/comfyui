@@ -23,22 +23,31 @@ NODES=(
     "https://github.com/cubiq/ComfyUI_essentials"
 )
 
+# 체크포인트 모델
+# 형식: "URL|원하는파일명.safetensors"
+# 파일명을 지정하지 않으면 모델 ID로 저장됩니다 (예: 2514310.safetensors)
 CHECKPOINT_MODELS=(
-    "https://civitai.com/api/download/models/2514310?type=Model&format=SafeTensor&size=pruned&fp=fp16"
+    "https://civitai.com/api/download/models/2514310?type=Model&format=SafeTensor&size=pruned&fp=fp16|waiIllustrious_v160.safetensors"
+    # "https://civitai.com/api/download/models/123456?type=Model&format=SafeTensor|my_awesome_model.safetensors"
 )
 
-UNET_MODELS=(
+UNET_MODELS=()
 
-)
-
+# LoRA 모델
+# 형식: "URL|원하는파일명.safetensors"
 LORA_MODELS=(
-    "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor" # 마키마
-    "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor" # Instant loss
+    "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor|makima_chainsaw_man.safetensors"
+    "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor|instant_loss_2col.safetensors"
+    # "https://civitai.com/api/download/models/789012?type=Model&format=SafeTensor|character_lora.safetensors"
 )
 
+# VAE 모델
+# 형식: "URL|원하는파일명.safetensors"
 VAE_MODELS=(
-    "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor"
+    "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
+    # "https://civitai.com/api/download/models/234567?type=Model&format=SafeTensor|anime_vae.safetensors"
 )
+
 
 UPSCALE_MODELS=(
 )
@@ -244,22 +253,33 @@ function provisioning_has_valid_civitai_token() {
 #     fi
 # }
 function provisioning_download() {
-    local url="$1"
+    local url_with_filename="$1"
     local dir="$2"
+    
+    # URL과 파일명 분리 (| 구분자 사용)
+    local url
+    local filename
+    
+    if [[ "$url_with_filename" == *"|"* ]]; then
+        # 커스텀 파일명이 지정된 경우
+        url="${url_with_filename%%|*}"
+        filename="${url_with_filename##*|}"
+        echo "Using custom filename: $filename"
+    else
+        # 파일명이 지정되지 않은 경우 모델 ID 사용
+        url="$url_with_filename"
+        local model_id=$(echo "$url" | grep -oP 'models/\K[0-9]+')
+        filename="${model_id}.safetensors"
+        echo "Using model ID as filename: $filename"
+    fi
     
     echo "Downloading from: $url"
     echo "To directory: $dir"
-    
-    # URL에서 모델 ID 추출
-    local model_id=$(echo "$url" | grep -oP 'models/\K[0-9]+')
-    local filename="${model_id}.safetensors"
-    
     echo "Saving as: $filename"
     
     # Civitai는 토큰을 URL 쿼리 파라미터로 추가
     if [[ -n $CIVITAI_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         echo "Using Civitai token"
-        # URL에 이미 쿼리 파라미터가 있으면 &, 없으면 ? 추가
         if [[ $url == *"?"* ]]; then
             url="${url}&token=${CIVITAI_TOKEN}"
         else
@@ -267,14 +287,21 @@ function provisioning_download() {
         fi
     elif [[ -n $HF_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
         echo "Using HuggingFace token (header method)"
-        # HuggingFace는 Authorization 헤더 사용
         wget --header="Authorization: Bearer $HF_TOKEN" \
              -O "${dir}/${filename}" \
              --show-progress \
              --timeout=60 \
              --tries=3 \
              "$url" 2>&1
-        return $?
+        local exit_code=$?
+        if [ $exit_code -ne 0 ]; then
+            echo "ERROR: Download failed with exit code $exit_code"
+            rm -f "${dir}/${filename}"
+        else
+            echo "SUCCESS: Downloaded as ${filename}"
+        fi
+        ls -lh "$dir"
+        return $exit_code
     fi
     
     # Civitai 또는 토큰 없는 경우
