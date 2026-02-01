@@ -20,6 +20,7 @@ UNET_MODELS=()
 LORA_MODELS=(
     "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor|makima_chainsaw_man.safetensors"
     "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor|instant_loss_2col.safetensors"
+    "https://civitai.com/api/download/models/2620727?type=Model&format=SafeTensor|진천우.safetensors"
 )
 
 # VAE 모델
