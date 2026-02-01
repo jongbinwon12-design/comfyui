@@ -48,34 +48,73 @@ CONTROLNET_MODELS=(
 
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
 
+# function provisioning_start() {
+#     if [[ ! -d /opt/environments/python ]]; then 
+#         export MAMBA_BASE=true
+#     fi
+#     source /opt/ai-dock/etc/environment.sh
+#     source /opt/ai-dock/bin/venv-set.sh comfyui
+
+#     provisioning_print_header
+#     provisioning_get_apt_packages
+#     provisioning_get_nodes
+#     provisioning_get_pip_packages
+#     provisioning_get_models \
+#         "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
+#         "${CHECKPOINT_MODELS[@]}"
+#     provisioning_get_models \
+#         "${WORKSPACE}/storage/stable_diffusion/models/unet" \
+#         "${UNET_MODELS[@]}"
+#     provisioning_get_models \
+#         "${WORKSPACE}/storage/stable_diffusion/models/lora" \
+#         "${LORA_MODELS[@]}"
+#     provisioning_get_models \
+#         "${WORKSPACE}/storage/stable_diffusion/models/controlnet" \
+#         "${CONTROLNET_MODELS[@]}"
+#     provisioning_get_models \
+#         "${WORKSPACE}/storage/stable_diffusion/models/vae" \
+#         "${VAE_MODELS[@]}"
+#     provisioning_get_models \
+#         "${WORKSPACE}/storage/stable_diffusion/models/esrgan" \
+#         "${UPSCALE_MODELS[@]}"
+#     provisioning_print_end
+# }
 function provisioning_start() {
-    if [[ ! -d /opt/environments/python ]]; then 
-        export MAMBA_BASE=true
+    # 환경 스크립트가 있으면 실행, 없으면 무시
+    if [[ -f /opt/ai-dock/etc/environment.sh ]]; then
+        source /opt/ai-dock/etc/environment.sh
     fi
-    source /opt/ai-dock/etc/environment.sh
-    source /opt/ai-dock/bin/venv-set.sh comfyui
+    
+    if [[ -f /opt/ai-dock/bin/venv-set.sh ]]; then
+        source /opt/ai-dock/bin/venv-set.sh comfyui
+    fi
+    
+    # WORKSPACE 기본값 설정
+    if [[ -z "${WORKSPACE}" ]]; then
+        export WORKSPACE="/workspace"
+    fi
 
     provisioning_print_header
     provisioning_get_apt_packages
     provisioning_get_nodes
     provisioning_get_pip_packages
     provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
+        "${WORKSPACE}/ComfyUI/models/checkpoints" \
         "${CHECKPOINT_MODELS[@]}"
     provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/unet" \
+        "${WORKSPACE}/ComfyUI/models/unet" \
         "${UNET_MODELS[@]}"
     provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/lora" \
+        "${WORKSPACE}/ComfyUI/models/loras" \
         "${LORA_MODELS[@]}"
     provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/controlnet" \
+        "${WORKSPACE}/ComfyUI/models/controlnet" \
         "${CONTROLNET_MODELS[@]}"
     provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/vae" \
+        "${WORKSPACE}/ComfyUI/models/vae" \
         "${VAE_MODELS[@]}"
     provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/esrgan" \
+        "${WORKSPACE}/ComfyUI/models/upscale_models" \
         "${UPSCALE_MODELS[@]}"
     provisioning_print_end
 }
