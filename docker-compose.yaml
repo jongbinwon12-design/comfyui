@@ -50,6 +50,7 @@ services:
         - ${SERVICEPORTAL_PORT_HOST:-1111}:${SERVICEPORTAL_PORT_HOST:-1111}
         # ComfyUI web interface
         - ${COMFYUI_PORT_HOST:-8188}:${COMFYUI_PORT_HOST:-8188}
+        - 7860:7860
         # Jupyter server
         - ${JUPYTER_PORT_HOST:-8888}:${JUPYTER_PORT_HOST:-8888}
         # Syncthing
