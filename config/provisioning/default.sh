@@ -256,16 +256,40 @@ function provisioning_download() {
     fi
     
     if [[ -n $auth_token ]]; then
-        wget --header="Authorization: Bearer $auth_token" -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
+        # -q 제거, -v 추가로 자세한 로그 출력
+        wget --header="Authorization: Bearer $auth_token" \
+             -nc \
+             --content-disposition \
+             --show-progress \
+             --timeout=60 \
+             --tries=3 \
+             -e dotbytes="${3:-4M}" \
+             -P "$2" \
+             "$1" 2>&1
     else
         echo "No auth token, downloading without authentication"
-        wget -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
+        wget -nc \
+             --content-disposition \
+             --show-progress \
+             --timeout=60 \
+             --tries=3 \
+             -e dotbytes="${3:-4M}" \
+             -P "$2" \
+             "$1" 2>&1
     fi
     
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then
         echo "ERROR: Download failed with exit code $exit_code"
+        # 실제로 다운로드된 파일이 있는지 확인
+        echo "Files in directory:"
+        ls -lh "$2"
+    else
+        echo "SUCCESS: Download completed"
+        ls -lh "$2"
     fi
+    
+    return $exit_code
 }
 
 provisioning_start
