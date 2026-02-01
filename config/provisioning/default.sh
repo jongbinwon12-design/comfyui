@@ -11,7 +11,6 @@ NODES=(
 # 형식: "URL|원하는파일명.safetensors"
 CHECKPOINT_MODELS=(
     "https://civitai.com/api/download/models/2514310?type=Model&format=SafeTensor&size=pruned&fp=fp16|waiIllustrious_v160.safetensors"
-    "https://civitai.com/api/download/models/2620727?type=Model&format=SafeTensor|Chen_Qianyu.safetensors"
 )
 
 UNET_MODELS=()
