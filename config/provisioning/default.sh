@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# 1. Flask 라이브러리 설치 (스크립트 실행에 필요)
-pip install flask
-
-# 2. 다운로더 실행 (백그라운드)
-# log 파일 위치는 권한 문제가 있을 수 있으므로 /workspace/downloader.log 추천
-python /workspace/model_downloader.py > /workspace/downloader.log 2>&1 &
-
-echo "Model Downloader가 7860 포트에서 백그라운드로 실행 중입니다."
-
 # This file will be sourced in init.sh
 
 NODES=(
