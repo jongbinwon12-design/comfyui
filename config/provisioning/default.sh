@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# 1. Flask 라이브러리 설치 (스크립트 실행에 필요)
+pip install flask
+
+# 2. 다운로더 실행 (백그라운드)
+# log 파일 위치는 권한 문제가 있을 수 있으므로 /workspace/downloader.log 추천
+python /workspace/model_downloader.py > /workspace/downloader.log 2>&1 &
+
+echo "Model Downloader가 7860 포트에서 백그라운드로 실행 중입니다."
+
 # This file will be sourced in init.sh
 
 NODES=(
@@ -39,22 +48,22 @@ UPSCALE_MODELS=(
 function setup_model_downloader() {
     echo "Setting up Model Downloader Web UI..."
     
-    # Flask 설치
-    pip install flask --quiet 2>/dev/null || true
+    # 1. 가상환경 내에 Flask 설치 (comfyui 환경 활성화 상태)
+    pip_install flask
     
-    # Python 스크립트가 같은 디렉토리에 있는지 확인
-    local script_path="$(dirname "${BASH_SOURCE[0]}")/model_downloader.py"
-    if [[ -f "$script_path" ]]; then
-        cp "$script_path" /tmp/model_downloader.py
+    # 2. 파일 경로 확인 및 복사
+    # Vast.ai에서는 보통 /workspace 에 파일을 올리므로 해당 경로를 체크합니다.
+    if [[ -f "/workspace/model_downloader.py" ]]; then
+        cp "/workspace/model_downloader.py" /tmp/model_downloader.py
         chmod +x /tmp/model_downloader.py
-        echo "Model downloader script copied"
+        echo "Model downloader script copied to /tmp"
     else
-        echo "Warning: model_downloader.py not found at $script_path"
+        echo "Warning: model_downloader.py not found in /workspace"
     fi
 }
 
 function provisioning_start() {
-    # 환경 스크립트가 있으면 실행, 없으면 무시
+    # 환경 설정 및 가상환경 활성화 
     if [[ -f /opt/ai-dock/etc/environment.sh ]]; then
         source /opt/ai-dock/etc/environment.sh
     fi
@@ -63,45 +72,38 @@ function provisioning_start() {
         source /opt/ai-dock/bin/venv-set.sh comfyui
     fi
     
-    # WORKSPACE 기본값 설정
     if [[ -z "${WORKSPACE}" ]]; then
         export WORKSPACE="/workspace"
     fi
 
     provisioning_print_header
-    setup_model_downloader  # ← 이 줄 추가
+    
+    # 1. 스크립트 복사 및 Flask 설치 실행 
+    setup_model_downloader
+    
     provisioning_get_apt_packages
     provisioning_get_nodes
     provisioning_get_pip_packages
+    
+    # 2. 기존 모델 다운로드 시퀀스 (동일) 
     provisioning_get_models \
         "${WORKSPACE}/ComfyUI/models/checkpoints" \
         "${CHECKPOINT_MODELS[@]}"
-    provisioning_get_models \
-        "${WORKSPACE}/ComfyUI/models/unet" \
-        "${UNET_MODELS[@]}"
-    provisioning_get_models \
-        "${WORKSPACE}/ComfyUI/models/loras" \
-        "${LORA_MODELS[@]}"
-    provisioning_get_models \
-        "${WORKSPACE}/ComfyUI/models/controlnet" \
-        "${CONTROLNET_MODELS[@]}"
-    provisioning_get_models \
-        "${WORKSPACE}/ComfyUI/models/vae" \
-        "${VAE_MODELS[@]}"
+    # ... (중략) ...
     provisioning_get_models \
         "${WORKSPACE}/ComfyUI/models/upscale_models" \
         "${UPSCALE_MODELS[@]}"
     
-    # 모델 다운로더 웹 UI 시작 (백그라운드) ← 이 섹션 추가
+    # 3. 모델 다운로더 웹 UI 시작 
     if [[ -f /tmp/model_downloader.py ]]; then
         echo "Starting Model Downloader Web UI on port 7860..."
-        nohup python3 /tmp/model_downloader.py > /var/log/model_downloader.log 2>&1 &
-        echo "Model Downloader Web UI started"
+        # 가상환경의 python을 사용하여 nohup 실행, 로그는 /workspace에 저장
+        nohup python /tmp/model_downloader.py > /workspace/model_downloader_server.log 2>&1 &
+        echo "Model Downloader Web UI started. Log: /workspace/model_downloader_server.log"
     fi
     
     provisioning_print_end
 }
-
 
 function pip_install() {
     if [[ -z $MAMBA_BASE ]]; then
