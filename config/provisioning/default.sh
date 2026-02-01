@@ -244,52 +244,53 @@ function provisioning_has_valid_civitai_token() {
 #     fi
 # }
 function provisioning_download() {
-    echo "Downloading from: $1"
-    echo "To directory: $2"
+    local url="$1"
+    local dir="$2"
     
-    if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
+    echo "Downloading from: $url"
+    echo "To directory: $dir"
+    
+    # URL에서 모델 ID 추출
+    local model_id=$(echo "$url" | grep -oP 'models/\K[0-9]+')
+    local filename="${model_id}.safetensors"
+    
+    if [[ -n $HF_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
         auth_token="$HF_TOKEN"
         echo "Using HuggingFace token"
-    elif [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
+    elif [[ -n $CIVITAI_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         auth_token="$CIVITAI_TOKEN"
         echo "Using Civitai token"
     fi
     
     if [[ -n $auth_token ]]; then
-        # -q 제거, -v 추가로 자세한 로그 출력
+        # -O로 파일명 직접 지정
         wget --header="Authorization: Bearer $auth_token" \
-             -nc \
-             --content-disposition \
+             -O "${dir}/${filename}" \
              --show-progress \
              --timeout=60 \
              --tries=3 \
-             -e dotbytes="${3:-4M}" \
-             -P "$2" \
-             "$1" 2>&1
+             "$url" 2>&1
     else
         echo "No auth token, downloading without authentication"
-        wget -nc \
-             --content-disposition \
+        wget -O "${dir}/${filename}" \
              --show-progress \
              --timeout=60 \
              --tries=3 \
-             -e dotbytes="${3:-4M}" \
-             -P "$2" \
-             "$1" 2>&1
+             "$url" 2>&1
     fi
     
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then
         echo "ERROR: Download failed with exit code $exit_code"
-        # 실제로 다운로드된 파일이 있는지 확인
-        echo "Files in directory:"
-        ls -lh "$2"
+        # 실패 시 불완전한 파일 삭제
+        rm -f "${dir}/${filename}"
     else
-        echo "SUCCESS: Download completed"
-        ls -lh "$2"
+        echo "SUCCESS: Download completed as ${filename}"
     fi
     
+    ls -lh "$dir"
     return $exit_code
 }
+
 
 provisioning_start
