@@ -48,17 +48,21 @@ UPSCALE_MODELS=(
 function setup_model_downloader() {
     echo "Setting up Model Downloader Web UI..."
     
-    # 1. 가상환경 내에 Flask 설치 (comfyui 환경 활성화 상태)
+    # 1. Flask 설치 (가상환경 내부)
     pip_install flask
     
-    # 2. 파일 경로 확인 및 복사
-    # Vast.ai에서는 보통 /workspace 에 파일을 올리므로 해당 경로를 체크합니다.
-    if [[ -f "/workspace/model_downloader.py" ]]; then
-        cp "/workspace/model_downloader.py" /tmp/model_downloader.py
+    # 2. 파일 자동 다운로드 (직접 업로드 대신 URL에서 가져오기)
+    # 아래 URL 부분에 실제 model_downloader.py 파일이 올라가 있는 주소를 넣으세요.
+    local download_url="https://raw.githubusercontent.com/jongbin03/model_downloader/refs/heads/main/model_downloader.py"
+    
+    echo "Downloading model_downloader.py from $download_url..."
+    wget -O /tmp/model_downloader.py "$download_url"
+    
+    if [[ -f "/tmp/model_downloader.py" ]]; then
         chmod +x /tmp/model_downloader.py
-        echo "Model downloader script copied to /tmp"
+        echo "Model downloader script successfully downloaded to /tmp"
     else
-        echo "Warning: model_downloader.py not found in /workspace"
+        echo "Error: Failed to download model_downloader.py"
     fi
 }
 
