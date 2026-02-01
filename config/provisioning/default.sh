@@ -2,22 +2,6 @@
 
 # This file will be sourced in init.sh
 
-# https://raw.githubusercontent.com/ai-dock/comfyui/main/config/provisioning/default.sh
-
-# Packages are installed after nodes so we can fix them...
-
-#DEFAULT_WORKFLOW="https://..."
-
-APT_PACKAGES=(
-    #"package-1"
-    #"package-2"
-)
-
-PIP_PACKAGES=(
-    #"package-1"
-    #"package-2"
-)
-
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
     "https://github.com/cubiq/ComfyUI_essentials"
@@ -25,71 +9,33 @@ NODES=(
 
 # 체크포인트 모델
 # 형식: "URL|원하는파일명.safetensors"
-# 파일명을 지정하지 않으면 모델 ID로 저장됩니다 (예: 2514310.safetensors)
 CHECKPOINT_MODELS=(
     "https://civitai.com/api/download/models/2514310?type=Model&format=SafeTensor&size=pruned&fp=fp16|waiIllustrious_v160.safetensors"
-    # "https://civitai.com/api/download/models/123456?type=Model&format=SafeTensor|my_awesome_model.safetensors"
+    "https://civitai.com/api/download/models/2620727?type=Model&format=SafeTensor|Chen_Qianyu.safetensors"
 )
 
 UNET_MODELS=()
 
-# LoRA 모델
+# LoRA 모델  
 # 형식: "URL|원하는파일명.safetensors"
 LORA_MODELS=(
     "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor|makima_chainsaw_man.safetensors"
     "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor|instant_loss_2col.safetensors"
-    # "https://civitai.com/api/download/models/789012?type=Model&format=SafeTensor|character_lora.safetensors"
 )
 
 # VAE 모델
 # 형식: "URL|원하는파일명.safetensors"
 VAE_MODELS=(
     "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
-    # "https://civitai.com/api/download/models/234567?type=Model&format=SafeTensor|anime_vae.safetensors"
 )
-
 
 UPSCALE_MODELS=(
-)
 
-CONTROLNET_MODELS=(
 )
 
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
 
-# function provisioning_start() {
-#     if [[ ! -d /opt/environments/python ]]; then 
-#         export MAMBA_BASE=true
-#     fi
-#     source /opt/ai-dock/etc/environment.sh
-#     source /opt/ai-dock/bin/venv-set.sh comfyui
-
-#     provisioning_print_header
-#     provisioning_get_apt_packages
-#     provisioning_get_nodes
-#     provisioning_get_pip_packages
-#     provisioning_get_models \
-#         "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
-#         "${CHECKPOINT_MODELS[@]}"
-#     provisioning_get_models \
-#         "${WORKSPACE}/storage/stable_diffusion/models/unet" \
-#         "${UNET_MODELS[@]}"
-#     provisioning_get_models \
-#         "${WORKSPACE}/storage/stable_diffusion/models/lora" \
-#         "${LORA_MODELS[@]}"
-#     provisioning_get_models \
-#         "${WORKSPACE}/storage/stable_diffusion/models/controlnet" \
-#         "${CONTROLNET_MODELS[@]}"
-#     provisioning_get_models \
-#         "${WORKSPACE}/storage/stable_diffusion/models/vae" \
-#         "${VAE_MODELS[@]}"
-#     provisioning_get_models \
-#         "${WORKSPACE}/storage/stable_diffusion/models/esrgan" \
-#         "${UPSCALE_MODELS[@]}"
-#     provisioning_print_end
-# }
 function provisioning_start() {
-    # 환경 스크립트가 있으면 실행, 없으면 무시
     if [[ -f /opt/ai-dock/etc/environment.sh ]]; then
         source /opt/ai-dock/etc/environment.sh
     fi
@@ -98,7 +44,6 @@ function provisioning_start() {
         source /opt/ai-dock/bin/venv-set.sh comfyui
     fi
     
-    # WORKSPACE 기본값 설정
     if [[ -z "${WORKSPACE}" ]]; then
         export WORKSPACE="/workspace"
     fi
@@ -197,76 +142,24 @@ function provisioning_get_models() {
 
 function provisioning_print_header() {
     printf "\n##############################################\n#                                            #\n#          Provisioning container            #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
-    if [[ $DISK_GB_ALLOCATED -lt $DISK_GB_REQUIRED ]]; then
-        printf "WARNING: Your allocated disk size (%sGB) is below the recommended %sGB - Some models will not be downloaded\n" "$DISK_GB_ALLOCATED" "$DISK_GB_REQUIRED"
-    fi
 }
 
 function provisioning_print_end() {
     printf "\nProvisioning complete:  Web UI will start now\n\n"
 }
 
-function provisioning_has_valid_hf_token() {
-    [[ -n "$HF_TOKEN" ]] || return 1
-    url="https://huggingface.co/api/whoami-v2"
-
-    response=$(curl -o /dev/null -s -w "%{http_code}" -X GET "$url" \
-        -H "Authorization: Bearer $HF_TOKEN" \
-        -H "Content-Type: application/json")
-
-    # Check if the token is valid
-    if [ "$response" -eq 200 ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-function provisioning_has_valid_civitai_token() {
-    [[ -n "$CIVITAI_TOKEN" ]] || return 1
-    url="https://civitai.com/api/v1/models?hidden=1&limit=1"
-
-    response=$(curl -o /dev/null -s -w "%{http_code}" -X GET "$url" \
-        -H "Authorization: Bearer $CIVITAI_TOKEN" \
-        -H "Content-Type: application/json")
-
-    # Check if the token is valid
-    if [ "$response" -eq 200 ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-# Download from $1 URL to $2 file path
-# function provisioning_download() {
-#     if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
-#         auth_token="$HF_TOKEN"
-#     elif 
-#         [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
-#         auth_token="$CIVITAI_TOKEN"
-#     fi
-#     if [[ -n $auth_token ]];then
-#         wget --header="Authorization: Bearer $auth_token" -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
-#     else
-#         wget -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
-#     fi
-# }
 function provisioning_download() {
     local url_with_filename="$1"
     local dir="$2"
     
-    # URL과 파일명 분리 (| 구분자 사용)
     local url
     local filename
     
     if [[ "$url_with_filename" == *"|"* ]]; then
-        # 커스텀 파일명이 지정된 경우
         url="${url_with_filename%%|*}"
         filename="${url_with_filename##*|}"
         echo "Using custom filename: $filename"
     else
-        # 파일명이 지정되지 않은 경우 모델 ID 사용
         url="$url_with_filename"
         local model_id=$(echo "$url" | grep -oP 'models/\K[0-9]+')
         filename="${model_id}.safetensors"
@@ -277,7 +170,6 @@ function provisioning_download() {
     echo "To directory: $dir"
     echo "Saving as: $filename"
     
-    # Civitai는 토큰을 URL 쿼리 파라미터로 추가
     if [[ -n $CIVITAI_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         echo "Using Civitai token"
         if [[ $url == *"?"* ]]; then
@@ -304,7 +196,6 @@ function provisioning_download() {
         return $exit_code
     fi
     
-    # Civitai 또는 토큰 없는 경우
     wget -O "${dir}/${filename}" \
          --show-progress \
          --timeout=60 \
