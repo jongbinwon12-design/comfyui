@@ -254,43 +254,46 @@ function provisioning_download() {
     local model_id=$(echo "$url" | grep -oP 'models/\K[0-9]+')
     local filename="${model_id}.safetensors"
     
-    if [[ -n $HF_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
-        auth_token="$HF_TOKEN"
-        echo "Using HuggingFace token"
-    elif [[ -n $CIVITAI_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
-        auth_token="$CIVITAI_TOKEN"
-        echo "Using Civitai token"
-    fi
+    echo "Saving as: $filename"
     
-    if [[ -n $auth_token ]]; then
-        # -O로 파일명 직접 지정
-        wget --header="Authorization: Bearer $auth_token" \
+    # Civitai는 토큰을 URL 쿼리 파라미터로 추가
+    if [[ -n $CIVITAI_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
+        echo "Using Civitai token"
+        # URL에 이미 쿼리 파라미터가 있으면 &, 없으면 ? 추가
+        if [[ $url == *"?"* ]]; then
+            url="${url}&token=${CIVITAI_TOKEN}"
+        else
+            url="${url}?token=${CIVITAI_TOKEN}"
+        fi
+    elif [[ -n $HF_TOKEN && $url =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
+        echo "Using HuggingFace token (header method)"
+        # HuggingFace는 Authorization 헤더 사용
+        wget --header="Authorization: Bearer $HF_TOKEN" \
              -O "${dir}/${filename}" \
              --show-progress \
              --timeout=60 \
              --tries=3 \
              "$url" 2>&1
-    else
-        echo "No auth token, downloading without authentication"
-        wget -O "${dir}/${filename}" \
-             --show-progress \
-             --timeout=60 \
-             --tries=3 \
-             "$url" 2>&1
+        return $?
     fi
+    
+    # Civitai 또는 토큰 없는 경우
+    wget -O "${dir}/${filename}" \
+         --show-progress \
+         --timeout=60 \
+         --tries=3 \
+         "$url" 2>&1
     
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then
         echo "ERROR: Download failed with exit code $exit_code"
-        # 실패 시 불완전한 파일 삭제
         rm -f "${dir}/${filename}"
     else
-        echo "SUCCESS: Download completed as ${filename}"
+        echo "SUCCESS: Downloaded as ${filename}"
     fi
     
     ls -lh "$dir"
     return $exit_code
 }
-
 
 provisioning_start
