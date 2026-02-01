@@ -35,7 +35,26 @@ UPSCALE_MODELS=(
 
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
 
+### 모델 다운로더 웹 UI 설정 ###
+function setup_model_downloader() {
+    echo "Setting up Model Downloader Web UI..."
+    
+    # Flask 설치
+    pip install flask --quiet 2>/dev/null || true
+    
+    # Python 스크립트가 같은 디렉토리에 있는지 확인
+    local script_path="$(dirname "${BASH_SOURCE[0]}")/model_downloader.py"
+    if [[ -f "$script_path" ]]; then
+        cp "$script_path" /tmp/model_downloader.py
+        chmod +x /tmp/model_downloader.py
+        echo "Model downloader script copied"
+    else
+        echo "Warning: model_downloader.py not found at $script_path"
+    fi
+}
+
 function provisioning_start() {
+    # 환경 스크립트가 있으면 실행, 없으면 무시
     if [[ -f /opt/ai-dock/etc/environment.sh ]]; then
         source /opt/ai-dock/etc/environment.sh
     fi
@@ -44,11 +63,13 @@ function provisioning_start() {
         source /opt/ai-dock/bin/venv-set.sh comfyui
     fi
     
+    # WORKSPACE 기본값 설정
     if [[ -z "${WORKSPACE}" ]]; then
         export WORKSPACE="/workspace"
     fi
 
     provisioning_print_header
+    setup_model_downloader  # ← 이 줄 추가
     provisioning_get_apt_packages
     provisioning_get_nodes
     provisioning_get_pip_packages
@@ -70,8 +91,17 @@ function provisioning_start() {
     provisioning_get_models \
         "${WORKSPACE}/ComfyUI/models/upscale_models" \
         "${UPSCALE_MODELS[@]}"
+    
+    # 모델 다운로더 웹 UI 시작 (백그라운드) ← 이 섹션 추가
+    if [[ -f /tmp/model_downloader.py ]]; then
+        echo "Starting Model Downloader Web UI on port 7860..."
+        nohup python3 /tmp/model_downloader.py > /var/log/model_downloader.log 2>&1 &
+        echo "Model Downloader Web UI started"
+    fi
+    
     provisioning_print_end
 }
+
 
 function pip_install() {
     if [[ -z $MAMBA_BASE ]]; then
