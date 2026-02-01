@@ -42,8 +42,6 @@ VAE_MODELS=(
 )
 
 UPSCALE_MODELS=(
-    "https://huggingface.co/Kim2091/AnimeSharp/resolve/main/4x-AnimeSharp.safetensors?download=true"
-    "https://huggingface.co/Kim2091/AnimeSharpV3/resolve/main/2x-AnimeSharpV3.safetensors?download=true"
 )
 
 CONTROLNET_MODELS=(
