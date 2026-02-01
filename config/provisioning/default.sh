@@ -33,7 +33,6 @@ UNET_MODELS=(
 
 LORA_MODELS=(
     "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor" # 마키마
-    "https://civitai.com/models/1019859/power-chainsaw-man-illustrious" # 파워
     "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor" # Instant loss
 )
 
@@ -192,17 +191,41 @@ function provisioning_has_valid_civitai_token() {
 }
 
 # Download from $1 URL to $2 file path
+# function provisioning_download() {
+#     if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
+#         auth_token="$HF_TOKEN"
+#     elif 
+#         [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
+#         auth_token="$CIVITAI_TOKEN"
+#     fi
+#     if [[ -n $auth_token ]];then
+#         wget --header="Authorization: Bearer $auth_token" -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
+#     else
+#         wget -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
+#     fi
+# }
 function provisioning_download() {
+    echo "Downloading from: $1"
+    echo "To directory: $2"
+    
     if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
         auth_token="$HF_TOKEN"
-    elif 
-        [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
+        echo "Using HuggingFace token"
+    elif [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         auth_token="$CIVITAI_TOKEN"
+        echo "Using Civitai token"
     fi
-    if [[ -n $auth_token ]];then
+    
+    if [[ -n $auth_token ]]; then
         wget --header="Authorization: Bearer $auth_token" -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
     else
+        echo "No auth token, downloading without authentication"
         wget -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
+    fi
+    
+    local exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo "ERROR: Download failed with exit code $exit_code"
     fi
 }
 
