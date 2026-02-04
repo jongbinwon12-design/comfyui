@@ -8,6 +8,9 @@ NODES=(
     "https://github.com/cubiq/ComfyUI_essentials"
     "https://github.com/willmiao/ComfyUI-Lora-Manager"
     "https://github.com/jags111/efficiency-nodes-comfyui"
+    "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
+    "https://github.com/ltdrdata/ComfyUI-Impact-Subpack"
+    
 )
 
 # 체크포인트 모델
