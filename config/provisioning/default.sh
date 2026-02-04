@@ -37,6 +37,13 @@ UPSCALE_MODELS=(
     "https://civitai.com/api/download/models/164904?type=Model&format=PickleTensor|realesrganX4plusAnime_v1.pt"
 )
 
+PIP_PACKAGES=(
+    "piexif"           # LoRA Manager용
+    "opencv-python"    # Impact Pack용 (cv2)
+    "simpleeval"       # Efficiency Nodes용
+    "numpy"            # 기본 연산용 (대부분의 노드 필수)
+)
+
 ### 운영 로직 (수정하지 마세요) ###
 
 function provisioning_start() {
