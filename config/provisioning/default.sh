@@ -6,6 +6,8 @@
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
     "https://github.com/cubiq/ComfyUI_essentials"
+    "https://github.com/willmiao/ComfyUI-Lora-Manager"
+    "https://github.com/jags111/efficiency-nodes-comfyui"
 )
 
 # 체크포인트 모델
@@ -19,7 +21,8 @@ UNET_MODELS=()
 LORA_MODELS=(
     "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor|makima_chainsaw_man.safetensors"
     "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor|instant_loss_2col.safetensors"
-    "https://civitai.com/api/download/models/2620727?type=Model&format=SafeTensor|진천우.safetensors"
+    "https://civitai.com/api/download/models/2235346?type=Model&format=SafeTensor|Japanese_art_styles.safetensors"
+    "https://civitai.com/api/download/models/2498503?type=Model&format=SafeTensor|MoriiMee.safetensors"
 )
 
 # VAE 모델
@@ -27,7 +30,9 @@ VAE_MODELS=(
     "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
 )
 
-UPSCALE_MODELS=()
+UPSCALE_MODELS=(
+    "https://civitai.com/api/download/models/164904?type=Model&format=PickleTensor|realesrganX4plusAnime_v1.pt"
+)
 
 ### 운영 로직 (수정하지 마세요) ###
 
