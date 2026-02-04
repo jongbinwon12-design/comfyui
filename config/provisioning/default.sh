@@ -37,6 +37,9 @@ VAE_MODELS=(
 )
 
 UPSCALE_MODELS=(
+)
+
+LATENT_UPSCALE_MODELS=(
     "https://civitai.com/api/download/models/164904?type=Model&format=PickleTensor|realesrganX4plusAnime_v1.pt"
 )
 
@@ -83,6 +86,9 @@ function provisioning_start() {
     provisioning_get_models \
         "${WORKSPACE}/ComfyUI/models/upscale_models" \
         "${UPSCALE_MODELS[@]}"
+    provisioning_get_models \
+        "${WORKSPACE}/ComfyUI/models/latent_upscale_models" \
+        "${LATENT_UPSCALE_MODELS[@]}"
     
     provisioning_print_end
 }
