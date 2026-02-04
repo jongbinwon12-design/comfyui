@@ -93,16 +93,20 @@ function provisioning_get_pip_packages() {
 function provisioning_get_nodes() {
     for repo in "${NODES[@]}"; do
         dir="${repo##*/}"
-        path="/opt/ComfyUI/custom_nodes/${dir}"
+        # 경로를 시스템 영역(/opt)에서 사용자 작업 영역(${WORKSPACE})으로 수정
+        path="${WORKSPACE}/ComfyUI/custom_nodes/${dir}"
+        
         requirements="${path}/requirements.txt"
         if [[ -d $path ]]; then
             if [[ ${AUTO_UPDATE,,} != "false" ]]; then
+                printf "Updating node: %s...\n" "${repo}"
                 ( cd "$path" && git pull )
                 if [[ -e $requirements ]]; then
                    pip_install -r "$requirements"
                 fi
             fi
         else
+            printf "Downloading node: %s...\n" "${repo}"
             git clone "${repo}" "${path}" --recursive
             if [[ -e $requirements ]]; then
                 pip_install -r "${requirements}"
