@@ -38,10 +38,11 @@ UPSCALE_MODELS=(
 )
 
 PIP_PACKAGES=(
-    "piexif"           # LoRA Manager용
-    "opencv-python"    # Impact Pack용 (cv2)
-    "simpleeval"       # Efficiency Nodes용
-    "numpy"            # 기본 연산용 (대부분의 노드 필수)
+    "piexif"
+    "opencv-python-headless"
+    "simpleeval"
+    "scikit-image"
+    "ultralytics"
 )
 
 ### 운영 로직 (수정하지 마세요) ###
