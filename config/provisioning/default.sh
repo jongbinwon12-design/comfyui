@@ -12,7 +12,8 @@ NODES=(
     "https://github.com/rgthree/rgthree-comfy"
     "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
     "https://github.com/ltdrdata/ComfyUI-Impact-Subpack"
-    "UltimateSDUpscale"
+    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale"
 )
 
 # 체크포인트 모델
