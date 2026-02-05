@@ -31,6 +31,10 @@ LORA_MODELS=(
     "https://civitai.com/api/download/models/2498503?type=Model&format=SafeTensor|MoriiMee.safetensors"
 )
 
+CONTROLNET_MODELS=(
+    "https://civitai.com/api/download/models/158658?type=Model&format=SafeTensor|OpenPoseXL2.safetensors"
+)
+
 # VAE 모델
 VAE_MODELS=(
     "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
@@ -90,6 +94,9 @@ function provisioning_start() {
     provisioning_get_models \
         "${WORKSPACE}/ComfyUI/models/latent_upscale_models" \
         "${LATENT_UPSCALE_MODELS[@]}"
+    provisioning_get_models \
+    "${WORKSPACE}/ComfyUI/models/controlnet" \
+    "${CONTROLNET_MODELS[@]}"
     
     provisioning_print_end
 }
