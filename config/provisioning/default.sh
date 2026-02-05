@@ -37,6 +37,7 @@ VAE_MODELS=(
 )
 
 UPSCALE_MODELS=(
+    "https://civitai.com/api/download/models/164904?type=Model&format=PickleTensor|realesrganX4plusAnime_v1.pt"
 )
 
 LATENT_UPSCALE_MODELS=(
