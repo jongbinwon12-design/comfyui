@@ -40,6 +40,7 @@ LORA_MODELS=(
     "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor|instant_loss_2col.safetensors"
     "https://civitai.com/api/download/models/2235346?type=Model&format=SafeTensor|Japanese_art_styles.safetensors"
     "https://civitai.com/api/download/models/2498503?type=Model&format=SafeTensor|MoriiMee.safetensors"
+    "https://civitai.com/api/download/models/2021473?type=Model&format=SafeTensor|dmd2-lighting8step_cfg1.5.safetensors" # 고속 로라
 )
 
 CONTROLNET_MODELS=(
