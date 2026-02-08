@@ -20,8 +20,6 @@ NODES=(
 # 체크포인트 모델
 CHECKPOINT_MODELS=(
     "https://civitai.com/api/download/models/2514310?type=Model&format=SafeTensor&size=pruned&fp=fp16|waiIllustrious_v160.safetensors"
-    "https://civitai.com/api/download/models/2555640?type=Model&format=SafeTensor&size=full&fp=fp8|DasiwaWAN22I2V14BLightspeed_synthseductionHighV9.safetensors"
-    "https://civitai.com/api/download/models/2555652?type=Model&format=SafeTensor&size=full&fp=fp8|DasiwaWAN22I2V14BLightspeed_synthseductionLowV9.safetensors"
 )
  
 DIFFUSION_MODELS=(
