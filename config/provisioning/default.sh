@@ -29,7 +29,7 @@ DIFFUSION_MODELS=(
 )
 
 TEXT_ENCODERS=(
-    "https://unsafelink.com/https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/text_encoders/qwen_3_06b_base.safetensors?download=true|qwen_3_06b_base.safetensors"
+    "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/text_encoders/qwen_3_06b_base.safetensors?download=true|qwen_3_06b_base.safetensors"
 )
 
 UNET_MODELS=()
@@ -50,7 +50,7 @@ CONTROLNET_MODELS=(
 # VAE 모델
 VAE_MODELS=(
     "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
-    "https://unsafelink.com/https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/vae/qwen_image_vae.safetensors?download=true|qwen_image_vae.safetensors"
+    "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/vae/qwen_image_vae.safetensors?download=true|qwen_image_vae.safetensors"
 )
 
 UPSCALE_MODELS=(
