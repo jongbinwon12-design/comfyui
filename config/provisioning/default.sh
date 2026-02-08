@@ -23,6 +23,14 @@ CHECKPOINT_MODELS=(
     "https://civitai.com/api/download/models/2555640?type=Model&format=SafeTensor&size=full&fp=fp8|DasiwaWAN22I2V14BLightspeed_synthseductionHighV9.safetensors"
     "https://civitai.com/api/download/models/2555652?type=Model&format=SafeTensor&size=full&fp=fp8|DasiwaWAN22I2V14BLightspeed_synthseductionLowV9.safetensors"
 )
+ 
+DIFFUSION_MODELS=(
+    "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-preview.safetensors?download=true|anima-preview.safetensors"
+)
+
+TEXT_ENCODERS=(
+    "https://unsafelink.com/https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/text_encoders/qwen_3_06b_base.safetensors?download=true|qwen_3_06b_base.safetensors"
+)
 
 UNET_MODELS=()
 
@@ -41,6 +49,7 @@ CONTROLNET_MODELS=(
 # VAE 모델
 VAE_MODELS=(
     "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
+    "https://unsafelink.com/https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/vae/qwen_image_vae.safetensors?download=true|qwen_image_vae.safetensors"
 )
 
 UPSCALE_MODELS=(
@@ -98,8 +107,16 @@ function provisioning_start() {
         "${WORKSPACE}/ComfyUI/models/latent_upscale_models" \
         "${LATENT_UPSCALE_MODELS[@]}"
     provisioning_get_models \
-    "${WORKSPACE}/ComfyUI/models/controlnet" \
-    "${CONTROLNET_MODELS[@]}"
+        "${WORKSPACE}/ComfyUI/models/controlnet" \
+        "${CONTROLNET_MODELS[@]}"
+    # Diffusion Models (Anima 등)
+    provisioning_get_models \
+        "${WORKSPACE}/ComfyUI/models/diffusion_models" \
+        "${DIFFUSION_MODELS[@]}"
+    # Text Encoders (CLIP, T5, Qwen 등)
+    provisioning_get_models \
+        "${WORKSPACE}/ComfyUI/models/clip" \
+        "${TEXT_ENCODERS[@]}"
     
     provisioning_print_end
 }
