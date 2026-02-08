@@ -15,6 +15,8 @@ NODES=(
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
     "https://github.com/ssitu/ComfyUI_UltimateSDUpscale"
     "https://github.com/newtextdoc1111/ComfyUI-Autocomplete-Plus"
+    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes" # anima
+    "https://github.com/ltdrdata/was-node-suite-comfyui" # anima
 )
 
 # 체크포인트 모델
