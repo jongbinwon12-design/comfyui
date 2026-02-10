@@ -10,37 +10,25 @@ NODES=(
     "https://github.com/jags111/efficiency-nodes-comfyui"
     "https://github.com/NyaamZ/efficiency-nodes-ED"
     "https://github.com/rgthree/rgthree-comfy"
-    "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
-    "https://github.com/ltdrdata/ComfyUI-Impact-Subpack"
-    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
-    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale"
-    "https://github.com/newtextdoc1111/ComfyUI-Autocomplete-Plus"
-    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes" # anima
-    "https://github.com/ltdrdata/was-node-suite-comfyui" # anima
 )
 
 # 체크포인트 모델
 CHECKPOINT_MODELS=(
-    "https://civitai.com/api/download/models/2514310?type=Model&format=SafeTensor&size=pruned&fp=fp16|waiIllustrious_v160.safetensors"
 )
  
-DIFFUSION_MODELS=(
-    "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-preview.safetensors?download=true|anima-preview.safetensors"
+ZIT_MODELS=(
+    "https://civitai.com/api/download/models/2633363?type=Model&format=SafeTensor&size=full&fp=fp16|moodyPornMix_zitV7.safetensors"
 )
 
 TEXT_ENCODERS=(
-    "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/text_encoders/qwen_3_06b_base.safetensors?download=true|qwen_3_06b_base.safetensors"
+    "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors|/qwen_3_4b.safetensors"
 )
 
 UNET_MODELS=()
 
 # LoRA 모델 (이 부분이 다시 작동하는지 확인하세요)
 LORA_MODELS=(
-    "https://civitai.com/api/download/models/1266729?type=Model&format=SafeTensor|makima_chainsaw_man.safetensors"
-    "https://civitai.com/api/download/models/2625886?type=Model&format=SafeTensor|instant_loss_2col.safetensors"
-    "https://civitai.com/api/download/models/2235346?type=Model&format=SafeTensor|Japanese_art_styles.safetensors"
-    "https://civitai.com/api/download/models/2498503?type=Model&format=SafeTensor|MoriiMee.safetensors"
-    "https://civitai.com/api/download/models/2021473?type=Model&format=SafeTensor|dmd2-lighting8step_cfg1.5.safetensors" # 고속 로라
+    "https://civitai.com/api/download/models/2607212?type=Model&format=SafeTensor|NSFW_master_ZIT_000008766.safetensors"
 )
 
 CONTROLNET_MODELS=(
@@ -49,16 +37,14 @@ CONTROLNET_MODELS=(
 
 # VAE 모델
 VAE_MODELS=(
-    "https://civitai.com/api/download/models/333245?type=Model&format=SafeTensor|sdxl_vae_fp16.safetensors"
-    "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/vae/qwen_image_vae.safetensors?download=true|qwen_image_vae.safetensors"
+    "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors|ae.safetensors"
 )
 
 UPSCALE_MODELS=(
-    "https://civitai.com/api/download/models/164904?type=Model&format=PickleTensor|realesrganX4plusAnime_v1.pt"
+    "https://huggingface.co/uwg/upscaler/resolve/main/ESRGAN/4x_NMKD-Siax_200k.pth|4x_NMKD-Siax_200k.pth"
 )
 
 LATENT_UPSCALE_MODELS=(
-    "https://civitai.com/api/download/models/164904?type=Model&format=PickleTensor|realesrganX4plusAnime_v1.pt"
 )
 
 PIP_PACKAGES=(
