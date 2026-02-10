@@ -21,7 +21,7 @@ ZIT_MODELS=(
 )
 
 TEXT_ENCODERS=(
-    "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors|/qwen_3_4b.safetensors"
+    "https://huggingface.co/Comfy-Org/z_image/resolve/main/split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors|/qwen_3_4b_fp8_mixed.safetensors"
 )
 
 UNET_MODELS=()
