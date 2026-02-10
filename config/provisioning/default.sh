@@ -104,6 +104,9 @@ function provisioning_start() {
     provisioning_get_models \
         "${WORKSPACE}/ComfyUI/models/clip" \
         "${TEXT_ENCODERS[@]}"
+    provisioning_get_models \
+        "${WORKSPACE}/ComfyUI/models/checkpoints" \
+        "${ZIT_MODELS[@]}"
     
     provisioning_print_end
 }
